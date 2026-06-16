@@ -1,0 +1,18 @@
+# Rust / Tauri
+/src-tauri/target
+**/*.rs.bk
+
+# Node
+node_modules/
+
+# Secrets / environment
+.env
+.env.*
+!.env.example
+
+# Build logs
+cargo-check.log
+
+# OS
+.DS_Store
+Thumbs.db

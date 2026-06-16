@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Download</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: var(--surface-solid);
+    }
+
+    .qs {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface-solid);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .qs-bar {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 14px 16px;
+      -webkit-app-region: drag;
+      border-bottom: 1px solid var(--border-2);
+    }
+
+    .qs-bar .titlebar-logo {
+      width: 19px;
+      height: 19px;
+      color: var(--accent);
+    }
+
+    .qs-bar h1 {
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .qs-bar .qs-close {
+      margin-left: auto;
+      -webkit-app-region: no-drag;
+    }
+
+    .qs-body {
+      padding: 18px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .qs-body .url-input {
+      height: 48px;
+    }
+
+    /* Full-width segmented control (override the fixed 64px seg width from the
+       shared stylesheet, which WebView2 otherwise keeps instead of flexing). */
+    #qsPresetGroup {
+      width: 100%;
+    }
+
+    #qsPresetGroup .seg {
+      flex: 1 1 0;
+      width: auto;
+    }
+
+    #qsPresetGroup .seg-glider {
+      width: calc((100% - 8px) / 3);
+    }
+
+    .qs-foot {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .qs-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .qs-buttons .btn {
+      flex: 1;
+    }
+
+    .qs-toggles {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .qs-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 11.5px;
+      color: var(--text-2);
+      user-select: none;
+    }
+
+    .qs-toggle input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .qs-switch {
+      width: 30px;
+      height: 17px;
+      border-radius: 999px;
+      background: var(--hover-strong);
+      position: relative;
+      flex-shrink: 0;
+      transition: background var(--t);
+    }
+
+    .qs-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--text-3);
+      transition: transform var(--t), background var(--t);
+    }
+
+    .qs-toggle input:checked + .qs-switch {
+      background: var(--accent);
+    }
+
+    .qs-toggle input:checked + .qs-switch::after {
+      transform: translateX(13px);
+      background: #fff;
+    }
+
+    .qs-error {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--danger);
+      background: var(--danger-bg);
+      padding: 8px 12px;
+      border-radius: var(--r-sm);
+    }
+
+    .qs-error[hidden] {
+      display: none;
+    }
+
+    .qs-hint {
+      font-size: 11px;
+      color: var(--text-3);
+      text-align: center;
+      font-family: var(--mono);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="qs">
+    <div class="qs-bar" data-tauri-drag-region>
+      <img src="text-mark.png" alt="Siphon mark" height="14">
+      <button class="icon-btn qs-close" id="qsClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="qs-body">
+      <form id="qsForm" autocomplete="off">
+        <div class="url-field" style="margin-bottom:14px;">
+          <svg class="url-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          </svg>
+          <input type="url" id="qsUrl" class="url-input" placeholder="Paste a link…" spellcheck="false" required>
+        </div>
+
+        <div class="segmented" id="qsPresetGroup" role="group" aria-label="Output format"
+          style="width:100%; margin-bottom:22px;">
+          <button type="button" class="seg active" data-preset="mp4" style="flex:1;">MP4</button>
+          <button type="button" class="seg" data-preset="mp3" style="flex:1;">MP3</button>
+          <button type="button" class="seg" data-preset="wav" style="flex:1;">WAV</button>
+          <span class="seg-glider" id="qsGlider" aria-hidden="true" style="width:calc((100% - 8px)/3);"></span>
+        </div>
+
+        <p class="qs-error" id="qsError" hidden></p>
+
+        <div class="qs-foot">
+          <div class="qs-buttons">
+            <button type="button" class="btn btn-ghost" id="qsCancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="qsDownload">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              Download
+            </button>
+          </div>
+          <div class="qs-toggles">
+            <label class="qs-toggle">
+              <input type="checkbox" id="qsOpenFile">
+              <span class="qs-switch"></span>
+              <span>Open file when done</span>
+            </label>
+            <label class="qs-toggle">
+              <input type="checkbox" id="qsOpenFolder">
+              <span class="qs-switch"></span>
+              <span>Open folder when done</span>
+            </label>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="quicksave.js" defer></script>
+</body>
+
+</html>

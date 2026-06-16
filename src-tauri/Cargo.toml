@@ -1,0 +1,62 @@
+[package]
+name = "siphon"
+version = "1.0.0"
+description = "A sleek desktop media downloader (MP4 / MP3 / WAV)"
+authors = ["Siphon"]
+edition = "2021"
+
+[lib]
+name = "siphon_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# Tauri default features minus `compression` — the brotli encoder it pulls in
+# fails to compile on this toolchain, and asset compression isn't needed.
+tauri = { version = "2", default-features = false, features = [
+    "wry",
+    "common-controls-v6",
+    "dynamic-acl",
+    "x11",
+    "dbus",
+    "protocol-asset",
+    "tray-icon",
+] }
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-shell = "2"
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-autostart = "2"
+tauri-plugin-opener = "2"
+# `siphon://` deep link so the browser extension can pop the Alt+S quick window.
+# single-instance routes the link to the already-running app (and prevents the
+# duplicate-instance/tray-lingering problem) — register it FIRST in `run()`.
+tauri-plugin-deep-link = "2"
+tauri-plugin-single-instance = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4"] }
+dirs = "6"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls"] }
+zip = { version = "2", default-features = false, features = ["deflate"] }
+# Integrity verification of the downloaded yt-dlp / ffmpeg binaries (CWE-494).
+sha2 = "0.10"
+hex = "0.4"
+
+# Native WebView2 access for the Advanced Search stream sniffer: we hook
+# `WebResourceRequested` to read manifest URLs at the network layer, which
+# bypasses the remote page's CSP (Tauri's `ipc.localhost` IPC is blocked there).
+# Pinned to the versions already in Cargo.lock so nothing extra compiles.
+[target.'cfg(windows)'.dependencies]
+webview2-com = "0.38"
+windows = { version = "0.61", features = ["Win32_Foundation", "Win32_System_Com"] }
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

@@ -1,0 +1,19 @@
+{
+    "identifier": "sniffer",
+    "description": "Stream-finder window: lets the injected sniffer script report detected stream URLs back to the app. Scoped to remote http/https pages.",
+    "windows": [
+        "sniffer"
+    ],
+    "remote": {
+        "urls": [
+            "https://*",
+            "http://*",
+            "https://*/*",
+            "http://*/*"
+        ]
+    },
+    "permissions": [
+        "core:default",
+        "core:event:default"
+    ]
+}

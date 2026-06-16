@@ -1,0 +1,22 @@
+{
+  "name": "siphon",
+  "version": "1.0.0",
+  "description": "A sleek desktop media downloader (MP4 / MP3 / WAV). Built with Tauri v2 and Rust.",
+  "private": true,
+  "scripts": {
+    "dev": "cargo tauri dev",
+    "build": "cargo tauri build",
+    "build:debug": "cargo tauri build --debug"
+  },
+  "keywords": [
+    "media",
+    "downloader",
+    "yt-dlp",
+    "ffmpeg",
+    "tauri",
+    "rust",
+    "desktop"
+  ],
+  "author": "Siphon",
+  "license": "MIT"
+}

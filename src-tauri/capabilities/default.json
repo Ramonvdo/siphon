@@ -1,0 +1,34 @@
+{
+    "identifier": "default",
+    "description": "Capability for the main and quicksave windows",
+    "windows": [
+        "main",
+        "quicksave"
+    ],
+    "permissions": [
+        "core:default",
+        "core:event:default",
+        "core:window:allow-start-dragging",
+        "clipboard-manager:default",
+        "clipboard-manager:allow-read-text",
+        "clipboard-manager:allow-write-text",
+        "dialog:default",
+        "dialog:allow-open",
+        "fs:default",
+        "fs:allow-read-file",
+        "shell:default",
+        "shell:allow-open",
+        "opener:default",
+        "opener:allow-open-path",
+        "opener:allow-reveal-item-in-dir",
+        "global-shortcut:default",
+        "global-shortcut:allow-register",
+        "global-shortcut:allow-unregister",
+        "global-shortcut:allow-unregister-all",
+        "global-shortcut:allow-is-registered",
+        "autostart:default",
+        "autostart:allow-enable",
+        "autostart:allow-disable",
+        "autostart:allow-is-enabled"
+    ]
+}

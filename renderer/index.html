@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Siphon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="app-booting">
+  <!-- ─── Title Bar ─── -->
+  <header class="titlebar" data-tauri-drag-region>
+    <div class="titlebar-drag" data-tauri-drag-region>
+      <div class="titlebar-brand">
+        <img class="titlebar-text" src="text-mark.png" alt="Siphon text" height="15">
+      </div>
+    </div>
+    <div class="titlebar-actions">
+      <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Open settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3" />
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
+      </button>
+      <div class="window-controls">
+        <button class="win-btn" id="winMinimize" title="Minimize" aria-label="Minimize">
+          <svg viewBox="0 0 12 12">
+            <line x1="2" y1="6" x2="10" y2="6" stroke="currentColor" stroke-width="1.2" />
+          </svg>
+        </button>
+        <button class="win-btn" id="winMaximize" title="Maximize" aria-label="Maximize">
+          <svg viewBox="0 0 12 12">
+            <rect x="2.5" y="2.5" width="7" height="7" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.2" />
+          </svg>
+        </button>
+        <button class="win-btn win-close" id="winClose" title="Close" aria-label="Close">
+          <svg viewBox="0 0 12 12">
+            <line x1="3" y1="3" x2="9" y2="9" stroke="currentColor" stroke-width="1.2" />
+            <line x1="9" y1="3" x2="3" y2="9" stroke="currentColor" stroke-width="1.2" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── App Layout ─── -->
+  <div class="app-layout">
+    <!-- Sidebar / filter rail -->
+    <aside class="rail">
+      <div class="rail-section">
+        <div class="rail-label">Library</div>
+        <nav class="filter-list" id="filterList">
+          <div class="filter-parent">
+          <button class="filter active" data-filter="all">
+            <span class="filter-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                <rect x="14" y="14" width="7" height="7" rx="1.5" />
+              </svg>
+            </span>
+            <span class="filter-name">Download</span>
+            <span class="filter-count" data-count="all">0</span>
+          </button>
+            <button class="filter-chevron" id="downloadToggle" type="button" aria-expanded="false"
+              aria-controls="downloadSub" aria-label="Show download filters">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <polyline points="9 6 15 12 9 18" />
+              </svg>
+            </button>
+          </div>
+          <div class="filter-sub" id="downloadSub">
+          <button class="filter sub" data-filter="active">
+            <span class="filter-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M12 2v4" />
+                <path d="m16.2 7.8 2.9-2.9" />
+                <path d="M18 12h4" />
+                <path d="m16.2 16.2 2.9 2.9" />
+                <path d="M12 18v4" />
+                <path d="m4.9 19.1 2.9-2.9" />
+                <path d="M2 12h4" />
+                <path d="m4.9 4.9 2.9 2.9" />
+              </svg>
+            </span>
+            <span class="filter-name">Active</span>
+            <span class="filter-count" data-count="active">0</span>
+          </button>
+          <button class="filter sub" data-filter="completed">
+            <span class="filter-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M21.8 10A10 10 0 1 1 17 3.3" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+            </span>
+            <span class="filter-name">Completed</span>
+            <span class="filter-count" data-count="completed">0</span>
+          </button>
+          <button class="filter sub" data-filter="audio">
+            <span class="filter-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13" />
+                <circle cx="6" cy="18" r="3" />
+                <circle cx="18" cy="16" r="3" />
+              </svg>
+            </span>
+            <span class="filter-name">Audio</span>
+            <span class="filter-count" data-count="audio">0</span>
+          </button>
+          <button class="filter sub" data-filter="video">
+            <span class="filter-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="m22 8-6 4 6 4V8Z" />
+                <rect x="2" y="6" width="14" height="12" rx="2" />
+              </svg>
+            </span>
+            <span class="filter-name">Video</span>
+            <span class="filter-count" data-count="video">0</span>
+          </button>
+          </div>
+        </nav>
+      </div>
+
+      <div class="rail-section">
+        <div class="rail-label">Tools</div>
+        <nav class="filter-list">
+          <button class="filter" data-view="advanced" id="advNav">
+            <span class="filter-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+            <span class="filter-name">Advanced Search</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="rail-spacer"></div>
+
+      <div class="rail-section">
+        <button class="rail-action" id="openFolderBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path
+              d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
+          </svg>
+          <span>Open folder</span>
+        </button>
+        <div class="engine-chip" id="engineChip" title="Download engine status">
+          <span class="engine-dot" id="engineDot"></span>
+          <div class="engine-meta">
+            <span class="engine-state" id="engineState">Checking engine…</span>
+            <span class="engine-detail" id="engineDetail">yt-dlp · ffmpeg</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+      <section class="intake glass" id="intake">
+        <form class="intake-form" id="downloadForm" autocomplete="off">
+          <div class="url-field">
+            <svg class="url-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+            <input type="url" id="urlInput" class="url-input"
+              placeholder="https://…  or a direct .mp4 / .mp3 / .wav link" spellcheck="false" required>
+            <button type="button" class="url-clear" id="urlClear" aria-label="Clear" title="Clear">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="intake-controls">
+            <div class="segmented" id="presetGroup" role="group" aria-label="Output format">
+              <button type="button" class="seg active" data-preset="mp4">MP4</button>
+              <button type="button" class="seg" data-preset="mp3">MP3</button>
+              <button type="button" class="seg" data-preset="wav">WAV</button>
+              <span class="seg-glider" id="segGlider" aria-hidden="true"></span>
+            </div>
+
+            <div class="intake-buttons">
+              <button type="button" class="btn btn-ghost" id="previewBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Preview
+              </button>
+              <button type="submit" class="btn btn-primary" id="downloadBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Download
+              </button>
+            </div>
+          </div>
+
+          <div class="intake-error" id="intakeError" hidden>
+            <span class="error-msg" id="intakeErrorMsg"></span>
+            <button type="button" class="error-action" id="intakeAdvBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              Try advanced search
+            </button>
+          </div>
+        </form>
+
+        <!-- Preview -->
+        <div class="preview" id="preview" hidden>
+          <div class="preview-thumb" id="previewThumb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="9" cy="9" r="2" />
+              <path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21" />
+            </svg>
+          </div>
+          <div class="preview-body">
+            <div class="preview-title" id="previewTitle">. . .</div>
+            <div class="preview-meta" id="previewMeta"></div>
+            <div class="preview-desc" id="previewDesc"></div>
+          </div>
+        </div>
+        <div class="preview preview-skeleton" id="previewSkeleton" hidden>
+          <div class="skeleton skeleton-thumb"></div>
+          <div class="preview-body">
+            <div class="skeleton skeleton-line lg"></div>
+            <div class="skeleton skeleton-line sm"></div>
+            <div class="skeleton skeleton-line md"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Queue -->
+      <section class="queue" id="queue">
+        <div class="queue-head">
+          <h2 class="queue-title">Queue <span class="queue-count" id="queueCount">0</span></h2>
+          <button class="btn btn-ghost btn-sm" id="clearFinishedBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M3 6h18" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+            Clear finished
+          </button>
+        </div>
+
+        <div class="card-grid" id="cardGrid"></div>
+
+        <div class="empty" id="emptyState">
+          <div class="empty-mark">
+            <img src="logo-mark.png" alt="Siphon logo mark" height="50">
+          </div>
+          <span class="empty-sub">No downloads yet</span>
+        </div>
+      </section>
+
+      <!-- Advanced Search -->
+      <section class="advanced" id="advanced" hidden>
+        <div class="adv-head">
+          <div class="adv-head-top">
+            <h2 class="adv-title">Advanced Search</h2>
+            <button type="button" class="btn btn-ghost btn-sm" id="advClearData"
+              title="Sign out and erase the cookies, cache and site data the finder browser saved">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Clear finder data
+            </button>
+          </div>
+          <p class="adv-sub">Paste a page that won't download normally. Siphon opens it in the
+            background and watches for the hidden video/audio stream (<span class="mono">.m3u8</span> /
+            <span class="mono">.mpd</span>) that the page loads. Sign-ins stay in the finder until you
+            <strong>Clear finder data</strong>.
+          </p>
+        </div>
+
+        <div class="adv-bar glass">
+          <div class="url-field">
+            <svg class="url-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+            <input type="url" id="advUrl" class="url-input" placeholder="https://…  the page that won't download"
+              spellcheck="false">
+          </div>
+          <div class="adv-bar-actions">
+            <button type="button" class="btn btn-primary" id="advFind">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              Find stream
+            </button>
+            <button type="button" class="btn btn-ghost" id="advClose" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="6" y="6" width="12" height="12" rx="2" />
+              </svg>
+              Stop
+            </button>
+          </div>
+        </div>
+
+        <p class="adv-status" id="advStatus" hidden></p>
+
+        <div class="queue-head adv-results-head" id="advResultsHead" hidden>
+          <h2 class="queue-title">Found streams <span class="queue-count" id="advCount">0</span></h2>
+          <button type="button" class="btn btn-ghost btn-sm" id="advClearBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M3 6h18" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+            Clear streams
+          </button>
+        </div>
+
+        <div class="adv-results" id="advResults"></div>
+
+        <div class="empty" id="advEmpty">
+          <div class="empty-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </div>
+          <span class="empty-sub">No streams found yet</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ─── Settings Overlay ─── -->
+  <div class="overlay" id="settingsOverlay">
+    <div class="sheet" id="settingsSheet">
+      <div class="sheet-head">
+        <h2>Settings</h2>
+        <button class="icon-btn sheet-close" id="settingsClose" aria-label="Close settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <div class="sheet-body">
+        <div class="setting-group">
+          <div class="setting-group-title">Appearance</div>
+          <div class="setting-row column">
+            <div class="setting-copy">
+              <span class="setting-name">Surface opacity</span>
+              <span class="setting-value mono" id="opacityValue">82%</span>
+            </div>
+            <input type="range" id="opacitySlider" min="40" max="100" step="1" value="82">
+          </div>
+          <div class="setting-row column">
+            <div class="setting-copy">
+              <span class="setting-name">Glass blur</span>
+              <span class="setting-value mono" id="blurValue">14px</span>
+            </div>
+            <input type="range" id="blurSlider" min="0" max="30" step="1" value="14">
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-group-title">Downloads</div>
+          <div class="setting-row">
+            <div class="setting-copy">
+              <span class="setting-name">Organize</span>
+              <span class="setting-hint">Where finished files are saved.</span>
+            </div>
+            <div class="dl-toggle" id="dlModeGroup">
+              <button type="button" class="dl-opt active" data-mode="single">One folder</button>
+              <button type="button" class="dl-opt" data-mode="byType">By type</button>
+            </div>
+          </div>
+          <div class="setting-row column" id="dlSingleRow">
+            <div class="setting-copy">
+              <span class="setting-name">Folder</span>
+            </div>
+            <div class="folder-row">
+              <span class="folder-path mono" id="dlFolderPath">—</span>
+              <button class="btn btn-secondary btn-sm" id="dlChangeBtn">Change…</button>
+            </div>
+          </div>
+          <div class="setting-row column" id="dlTypeRow" hidden>
+            <div class="folder-line"><span class="folder-tag">Video</span><span class="folder-path mono"
+                id="dlVideoPath">—</span></div>
+            <div class="folder-line"><span class="folder-tag">Audio</span><span class="folder-path mono"
+                id="dlAudioPath">—</span></div>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-group-title">Quick Download</div>
+          <div class="setting-row">
+            <div class="setting-copy">
+              <span class="setting-name">Global shortcut</span>
+              <span class="setting-hint">Opens a small window to paste &amp; download anywhere.</span>
+            </div>
+            <kbd class="kbd" id="shortcutDisplay">Alt+S</kbd>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-group-title">Startup</div>
+          <div class="setting-row">
+            <div class="setting-copy">
+              <span class="setting-name">Start on login</span>
+              <span class="setting-hint">Launch Siphon in the tray when you sign in.</span>
+            </div>
+            <div class="dl-toggle" id="autostartGroup">
+              <button type="button" class="dl-opt" data-on="true">On</button>
+              <button type="button" class="dl-opt active" data-on="false">Off</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-group-title">Engine</div>
+          <div class="setting-row">
+            <div class="setting-copy">
+              <span class="setting-name">yt-dlp</span>
+              <span class="setting-hint mono" id="ytVersion">—</span>
+            </div>
+            <span class="status-tag" id="ytTag">pending</span>
+          </div>
+          <div class="setting-row">
+            <div class="setting-copy">
+              <span class="setting-name">ffmpeg</span>
+              <span class="setting-hint mono" id="ffVersion">—</span>
+            </div>
+            <span class="status-tag" id="ffTag">pending</span>
+          </div>
+          <div class="setting-row">
+            <button class="btn btn-secondary btn-sm" id="retryEngineBtn">Re-check / download engine</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Toast ─── -->
+  <div class="toast" id="toast">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+    <span id="toastMessage">Done</span>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+
+</html>
