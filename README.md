@@ -14,6 +14,13 @@
 </p>
 
 <p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
+  <a href="https://github.com/Ramonvdo/siphon/releases/latest"><img src="https://img.shields.io/github/v/release/Ramonvdo/siphon" alt="Latest release"></a>
+  <a href="https://github.com/Ramonvdo/siphon/releases"><img src="https://img.shields.io/github/downloads/Ramonvdo/siphon/total" alt="Downloads"></a>
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue" alt="Platform">
+</p>
+
+<p align="center">
   <img src=".github/assets/app.png" width="820" alt="Siphon main window" />
 </p>
 
@@ -45,7 +52,7 @@ It also includes:
 - **System tray** with minimise-to-tray (closing hides to tray so downloads keep running)
 - **Start on login** (optional) — launch Siphon hidden in the tray when you sign in
 - A **global quick-paste window** (`Alt+S`) to grab a link without opening the main window
-- A companion **browser extension** (see [`siphon-extension`](../siphon-extension)) that
+- A companion **browser extension** (see [`siphon-extension`](https://github.com/Ramonvdo/siphon-extension)) that
   finds streams in your browser and hands them to Siphon via the `siphon://` deep link
 
 <p align="center">
